@@ -24,10 +24,10 @@ rules bet betType spin = case betType of
 --these will pay out even money if won
 --even and odd will also 
 isRed :: Int -> Bool 
-isRed spin = spin `elem` [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]
+isRed spin = spin /= 0 && spin `elem` [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]
 
 isBlack :: Int -> Bool 
-isBlack spin = spin /= 0 && not (isRed spin)
+isBlack spin = spin /= 0 && spin `elem` [2,4,6,8,10,11,13,15,17,19,20,22,24,26,29,31,33,35]
 
 firstEighteen :: Int -> Bool 
 firstEighteen spin = spin `elem` [1..18]
@@ -87,3 +87,21 @@ testCases = [(50, InsideBet 4, 4),
 --Runs each of the test cases through the rules and the main prints the resulting winnings
 runCases :: [Int]
 runCases = [rules bet betType spin | (bet, betType, spin) <- testCases]
+
+labelGrid :: [[Int]] -> [[((Int, Int), Int)]] 
+labelGrid grid = [[((x, y), cell) | (x , cell) <- zip [0..] row] | (y, row) <- zip [0..] grid]
+
+--the numbering order for the numbers in roulette
+rouletteNumbersTest :: [[Int]]
+rouletteNumbersTest = [[r, r - 1, r - 2] | r <- [36, 33..3]]
+
+--test
+testRoulette :: Bool
+testRoulette = labelGrid grid == ans 
+  where 
+       grid = [[3,2,1],
+               [6,5,4],
+               [9,8,7]]
+       ans = [[((0,0), 3), ((1,0), 2), ((2,0), 1)],
+                [((0,1), 6), ((1,1), 5), ((2,1), 4)],
+                [((0,2), 9), ((1,2), 8), ((2,2), 7)]]

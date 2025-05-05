@@ -20,6 +20,16 @@
   (major1) == 4 && (major2) <  18 || \
   (major1) == 4 && (major2) == 18 && (minor) <= 3)
 #endif /* MIN_VERSION_base */
+/* package brillo-1.13.3 */
+#ifndef VERSION_brillo
+#define VERSION_brillo "1.13.3"
+#endif /* VERSION_brillo */
+#ifndef MIN_VERSION_brillo
+#define MIN_VERSION_brillo(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  13 || \
+  (major1) == 1 && (major2) == 13 && (minor) <= 3)
+#endif /* MIN_VERSION_brillo */
 
 /* tool gcc-13 */
 #ifndef TOOL_VERSION_gcc

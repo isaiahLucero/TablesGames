@@ -1,6 +1,7 @@
 module Main where
 
-import Games.RouletteGOL (runCases)
+import BrilloMain(showTable)
+
 
 main :: IO ()
-main = mapM_ print runCases
+main = showTable
