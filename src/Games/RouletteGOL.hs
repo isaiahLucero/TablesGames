@@ -1,6 +1,57 @@
-module Games.RouletteGOL where 
+module Games.RouletteGOL (rouletteNumbersTest, runSimulation, BetType(..), labelGrid) where 
 
 data BetType = InsideBet Int | Red | Black | Even | Odd  | FirstHalf | SecondHalf | FirstThird | SecondThird | ThirdThird | FirstColumn | SecondColumn | ThirdColumn deriving (Show)
+
+--Random using glibc implementation
+m, a, c :: Int
+m = 2^31
+a = 1103515245
+c = 12345
+
+rand :: Int -> Int 
+rand xn = (a * xn + c) `mod` m
+
+rands :: Int -> [Int]
+rands xn = let xn1 = rand xn in xn1 : rands xn1
+
+randSpin :: Int -> [Int]
+randSpin seed = map (`mod` 37) (rands seed)
+
+--get user to play multiple hands before spin 
+simulateRounds :: Int -> [[(Int, BetType)]] -> [Int] -> Int 
+simulateRounds pot [] _ = pot 
+simulateRounds pot _ [] = pot 
+simulateRounds pot (roundBets:restOfBets) randomSpins = 
+    let (newPot, newRandomSpins) = playSpin pot roundBets randomSpins
+    in simulateRounds newPot restOfBets newRandomSpins
+
+--Simulates betting and updating their money pool for each spin
+playSpin :: Int -> [(Int, BetType)] -> [Int] -> (Int, [Int])
+playSpin pot bets (x:xs) 
+    |totalBet > pot = (pot, x:xs) 
+    |otherwise      = (pot - totalBet + totalWin, xs ++ [x])
+    where 
+      spin = x
+      totalBet = sum [amt | (amt, _) <- bets] 
+      totalWin = sum [rules amt betType spin | (amt, betType) <- bets]
+
+--test simulation for a spin
+runSimulation :: (Int, Int)
+runSimulation = (newPot, spin)
+  where 
+    seed        = 1234 
+    randomSpins = randSpin seed 
+    spin = head randomSpins
+    bets = [(10, Red), (5, InsideBet 17)]
+    (newPot, _) = playSpin 100 bets randomSpins
+
+--test the repeated betting 
+testSimulatedRuns :: Int 
+testSimulatedRuns = simulateRounds 100 rounds randomSpins
+   where 
+         seed = 4321 
+         randomSpins = randSpin seed 
+         rounds = [[(10, Red), (5, InsideBet 17)], [(15, Odd)], [(20, Even), (5, FirstHalf)]]
 
 --first starting of with the rules forthe table just for now
 --take a users number and do a random spin and see if the numbers line up and multiply by standard gambling rules 

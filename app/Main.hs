@@ -1,7 +1,7 @@
 module Main where
 
-import BrilloMain(showTable)
+import BrilloMain(run)
 
 
 main :: IO ()
-main = showTable
+main = run
